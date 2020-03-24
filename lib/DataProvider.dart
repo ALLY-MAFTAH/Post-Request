@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:post_request/Post.dart';
 
 class DataProvider extends ChangeNotifier {
-  final String url = "http://192.168.43.119:8000/api/posts";
+  final String url = "http://192.168.1.13:8000/api/posts";
   final List<Post> _posts = [];
 
   List<Post> get posts => [..._posts];

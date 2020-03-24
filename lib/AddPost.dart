@@ -24,6 +24,7 @@ class _AddPostState extends State<AddPost> {
   Widget build(BuildContext context) {
     var post = Provider.of<DataProvider>(context);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Add Post"),
@@ -89,7 +90,12 @@ class _AddPostState extends State<AddPost> {
                         ],
                         elevation: 24.0,
                       )
-                    );
+                    ).then((_) {
+                      Navigator.of(context).pop();
+                    });
+
+                    _titleController.text = "";
+                    _descriptionController.text = "";
                     }
                   });
                 }
