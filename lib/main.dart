@@ -43,7 +43,9 @@ class Home extends StatelessWidget {
       appBar: AppBar(
         title: Text('Future Posts'),
       ),
-      body: posts == [] ? CircularProgressIndicator() : ListView.builder(
+      body: posts.isEmpty ? Center(
+        child: CircularProgressIndicator(),
+      ) : ListView.builder(
         itemCount: posts.length,
         itemBuilder: (context, index) {
           return ListTile(
