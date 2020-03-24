@@ -100,4 +100,11 @@ class _AddPostState extends State<AddPost> {
         )),
     );
   }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
 }
