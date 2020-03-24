@@ -82,7 +82,7 @@ class _AddPostState extends State<AddPost> {
                       barrierDismissible: false,
                       builder: (_) => AlertDialog(
                         title: Text('Post Alert'),
-                        content: Text('A new post is created'),
+                        content: Text(post.status),
                         actions: <Widget>[
                           FlatButton(onPressed: () {
                             Navigator.of(context).pop();
