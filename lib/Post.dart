@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
+
 class Post {
    String title;
    String description;
 
-  Post({this.title, this.description});
+  Post({ @required this.title, @required this.description});
 
   factory Post.fromMap(Map<String, dynamic> map) {
     return Post(
