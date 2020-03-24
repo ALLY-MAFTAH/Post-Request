@@ -38,6 +38,9 @@ class DataProvider with ChangeNotifier {
       }
       
     } catch (e) {
+
+      status = "Ops...an error occured! \n Check your Internet Connection!";
+
       print("Something went wrong");
       print(e);
     }
@@ -71,6 +74,9 @@ class DataProvider with ChangeNotifier {
         print(_posts.removeLast());
       }
     } catch (e) {
+
+      status = "Ops...Error Occured! \n Check your Internet Connection!";
+
       print("something went wrong");
       print(e);
     }

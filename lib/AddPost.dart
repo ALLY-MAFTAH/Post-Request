@@ -18,7 +18,13 @@ class _AddPostState extends State<AddPost> {
   TextEditingController _titleController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
 
+  bool _isButtonDisabled;
 
+  @override
+  void initState() {
+    _isButtonDisabled = false;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +76,14 @@ class _AddPostState extends State<AddPost> {
             ),
 
             RaisedButton(
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
+              onPressed: _isButtonDisabled ? null : () {
+
+                if (_formKey.currentState.validate() && !_isButtonDisabled) {
+
+                  setState(() {
+                  _isButtonDisabled = true;
+                });
+
                   post.addPost(
                     title: _titleController.text,
                     description: _descriptionController.text
@@ -99,8 +111,11 @@ class _AddPostState extends State<AddPost> {
                     }
                   });
                 }
+
+                
               },
-              child: Text('Add Post'),
+              child: Text(
+                _isButtonDisabled ? 'Hold on...' : 'Add Post'),
             )
           ],
         )),
