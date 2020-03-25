@@ -56,14 +56,21 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    List<Post> posts = Provider.of<DataProvider>(context).posts;
+    final dataObj = Provider.of<DataProvider>(context);
+
+    List<Post> posts = dataObj.posts;
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Future Posts'),
       ),
       body: posts.isEmpty ? Center(
-        child: CircularProgressIndicator(),
+        child: dataObj.status != "" ? 
+        Text(
+          'No available Post', 
+          style: TextStyle(
+            fontSize: 16.0,
+        ),) : CircularProgressIndicator()
       ) : SmartRefresher(
         controller: _refreshController,
         enablePullDown: true,
@@ -90,11 +97,46 @@ class Home extends StatelessWidget {
         }),
         onRefresh: _onRefresh,
         child: ListView.builder(
+          padding: EdgeInsets.all(8.0),
           itemCount: posts.length,
           itemBuilder: (context, index) {
-            return ListTile(
+            return ExpansionTile(
+              key: GlobalKey(),
+              // leading: Text(""),
               title: Text(posts[index].title),
               subtitle: Text(posts[index].description),
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      IconButton(icon: Icon(Icons.edit), onPressed: (){}),
+                      IconButton(
+                        icon: Icon(Icons.delete), 
+                        onPressed: () {
+
+                          dataObj.deletePost(post: posts[index], index: index).then((value) {
+                            showDialog(
+                              context: context,
+                              builder: (_) => 
+                                AlertDialog(
+                                title: Text('Post'),
+                                content: Text(value),
+                                actions: <Widget>[
+                                  FlatButton(onPressed: () {
+                                    Navigator.of(context).pop();
+                                  }, child: Text('OK'))
+                                ],
+                              ),
+                            );
+                          });
+
+                      })
+                    ],
+                  ),
+                )
+              ],
             );
         }),
         ),

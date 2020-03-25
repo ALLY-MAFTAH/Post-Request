@@ -38,6 +38,9 @@ class DataProvider with ChangeNotifier {
       }
       
     } catch (e) {
+
+      status = "Ops...an error occured! \n Check your Internet Connection!";
+
       print("Something went wrong");
       print(e);
     }
@@ -45,20 +48,24 @@ class DataProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> addPost({title, description}) async {
-    status = "";
+  Future<String> addPost({@required title, @required description}) async {
 
-    final Post post = Post(title: title, description: description);
-
-    _addPost = post;
+    Post post = Post(title: title, description: description);
 
     Map<String, dynamic> data = Post.toMap(post);
+
     final jsonData = json.encode(data);
 
     try {
       http.Response response = await http.post(url, body: jsonData, headers: {'Content-Type': 'application/json'});
 
       if (response.statusCode == 201) {
+
+        Map<String, dynamic> d = json.decode(response.body);
+
+        final Post _post = Post.fromMap(d['post']);
+
+        _addPost = _post;
 
         status = "post added";
 
@@ -68,13 +75,45 @@ class DataProvider with ChangeNotifier {
 
         status = "Something went wrong";
 
-        print(_posts.removeLast());
       }
     } catch (e) {
+
+      status = "Ops...Error Occured! \n Check your Internet Connection!";
+
       print("something went wrong");
       print(e);
     }
 
+    return status;
+  }
+
+  Future<String> deletePost({@required Post post, @required int index}) async {
+    try {
+
+      http.Response response = await http.delete(url + '/${post.id}');
+
+      if (response.statusCode == 200) {
+
+        _posts.removeAt(index);
+
+        Map<String, dynamic> data = json.decode(response.body);
+
+        status = data['message'];
+      } else {
+
+        Map<String, dynamic> data = json.decode(response.body);
+
+        status = data['message'];
+      }
+    } catch(e) {
+
+      print("something went wrong");
+
+      print(e);
+    }
+
+    notifyListeners();
+    
     return status;
   }
 }

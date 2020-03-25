@@ -1,13 +1,15 @@
 import 'package:flutter/foundation.dart';
 
 class Post {
-   String title;
-   String description;
+  int id;
+  String title;
+  String description;
 
-  Post({ @required this.title, @required this.description});
+  Post({this.id, @required this.title, @required this.description});
 
   factory Post.fromMap(Map<String, dynamic> map) {
     return Post(
+      id: map['id'],
       title: map['title'],
       description: map['description']
     );
