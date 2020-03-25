@@ -67,7 +67,7 @@ class Home extends StatelessWidget {
       body: posts.isEmpty ? Center(
         child: dataObj.status != "" ? 
         Text(
-          dataObj.status, 
+          'No available Post', 
           style: TextStyle(
             fontSize: 16.0,
         ),) : CircularProgressIndicator()
@@ -97,11 +97,46 @@ class Home extends StatelessWidget {
         }),
         onRefresh: _onRefresh,
         child: ListView.builder(
+          padding: EdgeInsets.all(8.0),
           itemCount: posts.length,
           itemBuilder: (context, index) {
-            return ListTile(
+            return ExpansionTile(
+              key: GlobalKey(),
+              leading: Text("${posts[index].id}"),
               title: Text(posts[index].title),
               subtitle: Text(posts[index].description),
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      IconButton(icon: Icon(Icons.edit), onPressed: (){}),
+                      IconButton(
+                        icon: Icon(Icons.delete), 
+                        onPressed: () {
+
+                          dataObj.deletePost(post: posts[index], index: index).then((value) {
+                            showDialog(
+                              context: context,
+                              builder: (_) => 
+                                AlertDialog(
+                                title: Text('Post'),
+                                content: Text(value),
+                                actions: <Widget>[
+                                  FlatButton(onPressed: () {
+                                    Navigator.of(context).pop();
+                                  }, child: Text('OK'))
+                                ],
+                              ),
+                            );
+                          });
+
+                      })
+                    ],
+                  ),
+                )
+              ],
             );
         }),
         ),

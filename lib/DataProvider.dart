@@ -6,7 +6,7 @@ import 'package:post_request/Post.dart';
 
 class DataProvider with ChangeNotifier {
 
-  final String url = "http://192.168.1.13:8000/api/posts";
+  final String url = "http://192.168.43.119:8000/api/posts";
 
   List<Post> _posts = [];
 
@@ -49,7 +49,6 @@ class DataProvider with ChangeNotifier {
   }
 
   Future<String> addPost({title, description}) async {
-    status = "";
 
     final Post post = Post(title: title, description: description);
 
@@ -81,6 +80,35 @@ class DataProvider with ChangeNotifier {
       print(e);
     }
 
+    return status;
+  }
+
+  Future<String> deletePost({@required Post post, @required int index}) async {
+    try {
+
+      _posts.removeAt(index);
+
+      http.Response response = await http.delete(url + '/${post.id}');
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> data = json.decode(response.body);
+
+        status = data['message'];
+      } else {
+
+        Map<String, dynamic> data = json.decode(response.body);
+
+        status = data['message'];
+      }
+    } catch(e) {
+
+      print("something went wrong");
+
+      print(e);
+    }
+
+    notifyListeners();
+    
     return status;
   }
 }
