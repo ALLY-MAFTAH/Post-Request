@@ -102,7 +102,7 @@ class Home extends StatelessWidget {
           itemBuilder: (context, index) {
             return ExpansionTile(
               key: GlobalKey(),
-              leading: Text("${posts[index].id}"),
+              // leading: Text("${posts[index].id}"),
               title: Text(posts[index].title),
               subtitle: Text(posts[index].description),
               children: <Widget>[
