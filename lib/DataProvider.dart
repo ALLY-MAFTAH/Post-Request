@@ -6,7 +6,7 @@ import 'package:post_request/Post.dart';
 
 class DataProvider with ChangeNotifier {
 
-  final String url = "http://192.168.43.119:8000/api/posts";
+  final String url = "http://192.168.1.13:8000/api/posts";
 
   List<Post> _posts = [];
 
@@ -48,19 +48,24 @@ class DataProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> addPost({title, description}) async {
+  Future<String> addPost({@required title, @required description}) async {
 
-    final Post post = Post(title: title, description: description);
-
-    _addPost = post;
+    Post post = Post(title: title, description: description);
 
     Map<String, dynamic> data = Post.toMap(post);
+
     final jsonData = json.encode(data);
 
     try {
       http.Response response = await http.post(url, body: jsonData, headers: {'Content-Type': 'application/json'});
 
       if (response.statusCode == 201) {
+
+        Map<String, dynamic> d = json.decode(response.body);
+
+        final Post _post = Post.fromMap(d['post']);
+
+        _addPost = _post;
 
         status = "post added";
 
@@ -70,7 +75,6 @@ class DataProvider with ChangeNotifier {
 
         status = "Something went wrong";
 
-        print(_posts.removeLast());
       }
     } catch (e) {
 
@@ -86,11 +90,12 @@ class DataProvider with ChangeNotifier {
   Future<String> deletePost({@required Post post, @required int index}) async {
     try {
 
-      _posts.removeAt(index);
-
       http.Response response = await http.delete(url + '/${post.id}');
 
       if (response.statusCode == 200) {
+
+        _posts.removeAt(index);
+
         Map<String, dynamic> data = json.decode(response.body);
 
         status = data['message'];
