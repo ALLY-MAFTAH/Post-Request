@@ -5,6 +5,7 @@ import 'package:post_request/DataProvider.dart';
 import 'package:post_request/Post.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 void main() => runApp(MyApp());
@@ -102,8 +103,11 @@ class Home extends StatelessWidget {
           itemBuilder: (context, index) {
             return ExpansionTile(
               key: GlobalKey(),
-              leading: Text('${posts[index].id}'),
-              title: Text(posts[index].title),
+              // leading: Text('${posts[index].id}'),
+              title: Text(
+                posts[index].title,
+                style: GoogleFonts.nunito(),
+              ),
               subtitle: Text(posts[index].description),
               children: <Widget>[
                 Padding(
