@@ -102,7 +102,7 @@ class Home extends StatelessWidget {
           itemBuilder: (context, index) {
             return ExpansionTile(
               key: GlobalKey(),
-              // leading: Text(""),
+              leading: Text('${posts[index].id}'),
               title: Text(posts[index].title),
               subtitle: Text(posts[index].description),
               children: <Widget>[
@@ -111,12 +111,20 @@ class Home extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
-                      IconButton(icon: Icon(Icons.edit), onPressed: (){}),
+                      IconButton(
+                        icon: Icon(Icons.edit), 
+                        onPressed: () {
+                          dataObj.setFormStatus = false;
+
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                            return AddPost(post: posts[index],);
+                          }));
+                        }),
                       IconButton(
                         icon: Icon(Icons.delete), 
                         onPressed: () {
 
-                          dataObj.deletePost(post: posts[index], index: index).then((value) {
+                          dataObj.deletePost(post: posts[index]).then((value) {
                             showDialog(
                               context: context,
                               builder: (_) => 
@@ -131,7 +139,6 @@ class Home extends StatelessWidget {
                               ),
                             );
                           });
-
                       })
                     ],
                   ),
@@ -143,6 +150,7 @@ class Home extends StatelessWidget {
 
         floatingActionButton: FloatingActionButton(
           onPressed: (){
+            dataObj.setFormStatus = true;
             Navigator.of(context).push(MaterialPageRoute(builder: (context) {
               return AddPost();
             }));

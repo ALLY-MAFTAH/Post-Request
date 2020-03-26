@@ -3,10 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:post_request/Post.dart';
+import 'package:post_request/api/api.dart';
 
 class DataProvider with ChangeNotifier {
 
-  final String url = "http://192.168.1.13:8000/api/posts";
+  bool _formPostingStatus = true;
 
   List<Post> _posts = [];
 
@@ -14,7 +15,14 @@ class DataProvider with ChangeNotifier {
 
   List<Post> get posts => _posts;
 
+  bool get formPostingStatus => _formPostingStatus;
+
+  set setFormStatus(bool status) {
+    _formPostingStatus = status;
+  }
+
   set _addPost(Post post) {
+
     _posts.add(post);
 
     notifyListeners();
@@ -23,7 +31,7 @@ class DataProvider with ChangeNotifier {
 
   Future<void> fetchPost() async {
     try {
-      http.Response response = await http.get(url);
+      http.Response response = await http.get(api + 'posts');
 
       if (response.statusCode == 200) {
 
@@ -57,7 +65,8 @@ class DataProvider with ChangeNotifier {
     final jsonData = json.encode(data);
 
     try {
-      http.Response response = await http.post(url, body: jsonData, headers: {'Content-Type': 'application/json'});
+
+      http.Response response = await http.post(api + 'posts', body: jsonData, headers: {'Content-Type': 'application/json'});
 
       if (response.statusCode == 201) {
 
@@ -65,9 +74,9 @@ class DataProvider with ChangeNotifier {
 
         final Post _post = Post.fromMap(d['post']);
 
-        _addPost = _post;
+        _addPost = _post; 
 
-        status = "post added";
+        status = "Post added";
 
       } else {
         
@@ -87,14 +96,59 @@ class DataProvider with ChangeNotifier {
     return status;
   }
 
-  Future<String> deletePost({@required Post post, @required int index}) async {
+
+   Future<String> editPost({@required Post post}) async {
+
+    Map<String, dynamic> data = Post.toMap(post);
+
+    final jsonData = json.encode(data);
+
     try {
 
-      http.Response response = await http.delete(url + '/${post.id}');
+      http.Response response = await http.put(api + 'posts/${post.id}', body: jsonData, headers: {'Content-Type': 'application/json'});
+
+      if (response.statusCode == 201) {
+
+        Map<String, dynamic> d = json.decode(response.body);
+
+        final Post _post = Post.fromMap(d['post']);
+
+       int postIndex =  _posts.indexWhere((val)=> val.id == post.id);
+
+       _posts[postIndex] = _post;
+
+       status = "post edited successfully";
+
+       notifyListeners();
+
+      } else {
+        
+        print(response.body); // for debbuging response from the post api
+
+        status = "Something went wrong";
+
+      }
+    } catch (e) {
+
+      status = "Ops...Error Occured! \n Check your Internet Connection!";
+
+      print("something went wrong");
+      print(e);
+    }
+
+    return status;
+  }
+
+  Future<String> deletePost({@required Post post}) async {
+    try {
+
+      http.Response response = await http.delete(api + 'posts/${post.id}');
 
       if (response.statusCode == 200) {
 
-        _posts.removeAt(index);
+        int postIndex = _posts.indexWhere((value) => value.id == post.id);
+
+        _posts.removeAt(postIndex);
 
         Map<String, dynamic> data = json.decode(response.body);
 
