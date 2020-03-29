@@ -30,6 +30,14 @@ class _MyAppState extends State<MyApp> {
     return ChangeNotifierProvider(
       create: (BuildContext context) => _dataProvider,
       child: MaterialApp(
+        theme: ThemeData(
+          textTheme: TextTheme(
+            headline: GoogleFonts.robotoCondensed(),
+            body1: GoogleFonts.robotoCondensed(),
+            button: GoogleFonts.robotoCondensed(),
+            title: GoogleFonts.eczar()
+          )
+        ),
       home: Home(dataProvider: _dataProvider,),
     ),
     );
@@ -63,7 +71,7 @@ class Home extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Future Posts'),
+        title: Text('Future Posts', style: Theme.of(context).textTheme.title,),
       ),
       body: posts.isEmpty ? Center(
         child: dataObj.status != "" ? 
@@ -106,7 +114,7 @@ class Home extends StatelessWidget {
               // leading: Text('${posts[index].id}'),
               title: Text(
                 posts[index].title,
-                style: GoogleFonts.nunito(),
+                style: Theme.of(context).textTheme.title,
               ),
               subtitle: Text(posts[index].description),
               children: <Widget>[
