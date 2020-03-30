@@ -17,11 +17,11 @@ class _AddPostState extends State<AddPost> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  FocusNode _titleFocusNode = FocusNode();
-  FocusNode _descriptionFocusNode = FocusNode();
+  FocusNode _usernameFocusNode = FocusNode();
+  FocusNode _captionFocusNode = FocusNode();
 
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _captionController = TextEditingController();
 
   bool _isButtonDisabled;
 
@@ -37,8 +37,8 @@ class _AddPostState extends State<AddPost> {
     var postProvider = Provider.of<DataProvider>(context);
     
     if (!postProvider.formPostingStatus) {
-      _titleController.text = widget.post.title;
-      _descriptionController.text = widget.post.description;
+      _usernameController.text = widget.post.username;
+      _captionController.text = widget.post.caption;
     }
 
 
@@ -55,16 +55,16 @@ class _AddPostState extends State<AddPost> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
-                focusNode: _titleFocusNode,
-                controller: _titleController,
+                focusNode: _usernameFocusNode,
+                controller: _usernameController,
                 validator: (val) {
                   if(val.isEmpty)
-                    return "name is required";
+                    return "Username is required";
                   else
                     return null;
                 },
                 decoration: InputDecoration(
-                  hintText: "name",
+                  hintText: "Username",
                 ),
                 keyboardType: TextInputType.text
               ),
@@ -73,16 +73,16 @@ class _AddPostState extends State<AddPost> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
-                focusNode: _descriptionFocusNode,
-                controller: _descriptionController,
+                focusNode: _captionFocusNode,
+                controller: _captionController,
                 validator: (val) {
                   if(val.isEmpty)
-                    return "description is required";
+                    return "Caption is required";
                   else
                     return null;
                 },
                 decoration: InputDecoration(
-                  hintText: "description",
+                  hintText: "Caption",
                 ),
                 keyboardType: TextInputType.text
               ),
@@ -100,8 +100,8 @@ class _AddPostState extends State<AddPost> {
                   postProvider.formPostingStatus ?
 
                   postProvider.addPost(
-                    title: _titleController.text,
-                    description: _descriptionController.text,
+                    username: _usernameController.text,
+                    caption: _captionController.text,
                   ).then((value) {
                     if (value != "") {
                       showDialog(
@@ -118,9 +118,9 @@ class _AddPostState extends State<AddPost> {
                         elevation: 24.0,
                       )
                     ).then((_) {
+                      _usernameController.clear();
+                      _captionController.clear();
                       Navigator.of(context).pop();
-                      _titleController.text = "";
-                      _descriptionController.text = "";
                     });
 
                     
@@ -128,7 +128,7 @@ class _AddPostState extends State<AddPost> {
                   }) :
 
                   postProvider.editPost(
-                   post: Post(title: _titleController.text, description: _descriptionController.text, id: widget.post.id)
+                   post: Post(username: _usernameController.text, caption: _captionController.text, id: widget.post.id)
                   ).then((value) {
                     if (value != "") {
                       showDialog(
@@ -148,8 +148,8 @@ class _AddPostState extends State<AddPost> {
                       Navigator.of(context).pop();
                     });
 
-                    _titleController.text = "";
-                    _descriptionController.text = "";
+                    _usernameController.text = "";
+                    _captionController.text = "";
                     }
                   });
                 }
@@ -165,8 +165,8 @@ class _AddPostState extends State<AddPost> {
 
   @override
   void dispose() {
-    _titleController.dispose();
-    _descriptionController.dispose();
+    _usernameController.dispose();
+    _captionController.dispose();
     super.dispose();
   }
 }

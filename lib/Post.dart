@@ -2,23 +2,23 @@ import 'package:flutter/foundation.dart';
 
 class Post {
   int id;
-  String title;
-  String description;
+  String username;
+  String caption;
 
-  Post({this.id, @required this.title, @required this.description});
+  Post({this.id, @required this.username, @required this.caption});
 
   factory Post.fromMap(Map<String, dynamic> map) {
     return Post(
       id: map['id'],
-      title: map['title'],
-      description: map['description']
+      username: map['title'],
+      caption: map['description']
     );
   }
 
   static Map<String, dynamic> toMap(Post post) {
     final Map<String, dynamic> data = <String, dynamic> {
-      'title': post.title,
-      'description': post.description
+      'title': post.username,
+      'description': post.caption
     };
 
     return data;

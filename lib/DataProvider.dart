@@ -56,9 +56,9 @@ class DataProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> addPost({@required title, @required description}) async {
+  Future<String> addPost({@required username, @required caption}) async {
 
-    Post post = Post(title: title, description: description);
+    Post post = Post(username: username, caption: caption);
 
     Map<String, dynamic> data = Post.toMap(post);
 
