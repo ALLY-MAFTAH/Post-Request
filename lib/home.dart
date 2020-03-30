@@ -256,7 +256,7 @@ class _HomeState extends State<Home> {
                                           child: RichText(
                                             text: TextSpan(
                                                 text: "@" +
-                                                    posts[index].username +
+                                                    posts[index].title +
                                                     ": ",
                                                 style: TextStyle(
                                                     color: Colors.black,
@@ -266,7 +266,7 @@ class _HomeState extends State<Home> {
                                                 children: <TextSpan>[
                                                   TextSpan(
                                                       text:
-                                                          posts[index].caption,
+                                                          posts[index].description,
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.normal,
