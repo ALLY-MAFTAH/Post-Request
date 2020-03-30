@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:post_request/DataProvider.dart';
 import 'package:post_request/Post.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +16,19 @@ class AddPost extends StatefulWidget {
 }
 
 class _AddPostState extends State<AddPost> {
+
+  File _image;
+
+  Future getImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _image = image;
+    });
+
+    print('-----------------------------------');
+    print(_image.path);
+  }
 
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -101,7 +117,7 @@ class _AddPostState extends State<AddPost> {
 
                   postProvider.addPost(
                     title: _titleController.text,
-                    description: _descriptionController.text,
+                    description: _descriptionController.text, imagePath: _image.path,
                   ).then((value) {
                     if (value != "") {
                       showDialog(
@@ -128,7 +144,7 @@ class _AddPostState extends State<AddPost> {
                   }) :
 
                   postProvider.editPost(
-                   post: Post(title: _titleController.text, description: _descriptionController.text, id: widget.post.id)
+                   post: Post(title: _titleController.text, description: _descriptionController.text, id: widget.post.id, image: widget.post.image)
                   ).then((value) {
                     if (value != "") {
                       showDialog(
@@ -157,9 +173,18 @@ class _AddPostState extends State<AddPost> {
               },
               child: Text(
                 _isButtonDisabled ? 'Hold on...' : postProvider.formPostingStatus ? 'Add Post' : 'Edit Post'),
+            ),
+
+            Container(
+              height: 200,
+              child: _image == null ? Text('No image selected') : Image.file(_image),
             )
           ],
         )),
+        floatingActionButton: FloatingActionButton(
+          onPressed: getImage,
+          child: Icon(Icons.photo),
+        )
     );
   }
 

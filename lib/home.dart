@@ -5,6 +5,7 @@ import 'package:post_request/DataProvider.dart';
 import 'package:post_request/Post.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class Home extends StatefulWidget {
   final DataProvider dataProvider;
@@ -147,11 +148,14 @@ class _HomeState extends State<Home> {
                                                         .width *
                                                     4 /
                                                     5,
-                                                decoration: BoxDecoration(
-                                                    image: DecorationImage(
-                                                        image: AssetImage(
-                                                            "assets/images/qlicue.jpg"),
-                                                        fit: BoxFit.cover)),
+                                                // decoration: BoxDecoration(
+                                                //     image: DecorationImage(
+                                                //         image: AssetImage(
+                                                //             ""),
+                                                //         fit: BoxFit.cover)),
+                                                child: CachedNetworkImage(imageUrl: posts[index].image,
+                                                placeholder: (context, url) => CircularProgressIndicator(),
+                                                ),
                                               ),
                                               onDoubleTap: () {
                                                 setState(() {

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:post_request/Post.dart';
 import 'package:post_request/api/api.dart';
+import 'package:post_request/config.dart';
+import 'package:cloudinary_client/cloudinary_client.dart';
 
 class DataProvider with ChangeNotifier {
 
@@ -12,6 +14,9 @@ class DataProvider with ChangeNotifier {
   List<Post> _posts = [];
 
   String status = "";
+
+  // cloudnary object
+  CloudinaryClient client = new CloudinaryClient(variables['API_KEY'], variables['API_SECRET'], variables['CLOUD_NAME']);
 
   List<Post> get posts => _posts;
 
@@ -56,10 +61,22 @@ class DataProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> addPost({@required title, @required description}) async {
+  Future<String> addPost({@required title, @required description, @required imagePath}) async {
 
-    Post post = Post(title: title, description: description);
+    String imageUrl = "";
 
+    try {
+
+    var response = await client.uploadImage(imagePath);
+
+    imageUrl = response.url;
+
+    } catch (e) {
+      print(e);
+    }
+
+    Post post = Post(title: title, description: description, image: imageUrl);
+    
     Map<String, dynamic> data = Post.toMap(post);
 
     final jsonData = json.encode(data);
