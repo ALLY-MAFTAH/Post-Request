@@ -7,24 +7,19 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class Home extends StatefulWidget {
+class Home extends StatelessWidget {
+
   final DataProvider dataProvider;
 
-  Home({Key key, @required this.dataProvider}) : super(key: key);
+  Home({Key key, this.dataProvider}) : super(key: key);
 
-  @override
-  _HomeState createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  bool _isLiked = false;
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
+
   void _onRefresh() async {
-    await widget.dataProvider.fetchPost();
+    await dataProvider.fetchPost();
 
     _refreshController.refreshCompleted();
   }
@@ -35,19 +30,9 @@ class _HomeState extends State<Home> {
 
     List<Post> posts = dataObj.posts;
 
-    return Container(
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage("assets/images/back.PNG"), fit: BoxFit.cover)),
-      child: Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: Colors.lime[300].withOpacity(0.3),
+    return Scaffold(
         appBar: AppBar(
-          centerTitle: true,
-          title: Text('POST REQUEST APP',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              )),
+          title: Text('POST REQUEST APP'),
         ),
         body: posts.isEmpty
             ? Center(
@@ -80,234 +65,82 @@ class _HomeState extends State<Home> {
                   );
                 }),
                 onRefresh: _onRefresh,
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.ac_unit,
-                            color: Colors.blue[800],
-                          ),
-                          Text(
-                            " Current Available Posts",
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(width: 20),
-                          Text(
-                            "(" + posts.length.toString() + ")",
-                            style: TextStyle(
-                                color: Colors.deepPurple[900],
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                          )
-                        ],
-                      ),
-                    ),
-                    Divider(),
-                    Expanded(
-                      child: ListView.builder(
-                          physics: BouncingScrollPhysics(),
-                          scrollDirection: Axis.vertical,
-                          itemCount: posts.length,
-                          itemBuilder: (context, index) {
-                            return Card(
-                              key: GlobalKey(),
-                              elevation: 5,
-                              color: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(50),
-                                topLeft: Radius.circular(10),
-                                bottomLeft: Radius.circular(10),
-                                bottomRight: Radius.circular(10),
-                              )),
-                              child: Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(50),
-                                        topLeft: Radius.circular(10),
-                                        bottomLeft: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
-                                      ),
-                                      color: Colors.white.withOpacity(0.3)),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Row(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.all(5.0),
-                                            child: InkWell(
-                                              child: Container(
-                                                height: 250,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    4 /
-                                                    5,
-                                                // decoration: BoxDecoration(
-                                                //     image: DecorationImage(
-                                                //         image: AssetImage(
-                                                //             ""),
-                                                //         fit: BoxFit.cover)),
-                                                child: CachedNetworkImage(imageUrl: posts[index].image,
-                                                placeholder: (context, url) => CircularProgressIndicator(),
-                                                ),
-                                              ),
-                                              onDoubleTap: () {
-                                                setState(() {
-                                                  _isLiked = !_isLiked;
-                                                });
-                                              },
-                                            ),
-                                          ),
-                                          Container(
-                                            child: Column(
-                                              children: <Widget>[
-                                                _isLiked
-                                                    ? IconButton(
-                                                        icon: Icon(
-                                                            Icons.favorite),
-                                                        iconSize: 38,
-                                                        color:
-                                                            Colors.red,
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            _isLiked =
-                                                                !_isLiked;
-                                                          });
-                                                        })
-                                                    : IconButton(
-                                                        icon: Icon(
-                                                            Icons.favorite),
-                                                        color: Colors.grey[600],
-                                                        iconSize: 38,
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            _isLiked =
-                                                                !_isLiked;
-                                                          });
-                                                        }),
-                                                SizedBox(
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .height /
-                                                      12,
-                                                ),
-                                                IconButton(
-                                                    icon: Icon(Icons.edit),
-                                                    color: Colors.blueAccent,
-                                                    onPressed: () {
-                                                      dataObj.setFormStatus =
-                                                          false;
-
-                                                      Navigator.of(context).push(
-                                                          MaterialPageRoute(
-                                                              builder:
-                                                                  (context) {
-                                                        return AddPost(
-                                                          post: posts[index],
-                                                        );
-                                                      }));
-                                                    }),
-                                                IconButton(
-                                                    icon: Icon(Icons.delete),
-                                                    color: Colors.redAccent,
-                                                    onPressed: () {
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (_) =>
-                                                            AlertDialog(
-                                                          title: Text('Post'),
-                                                          content: Text(
-                                                              "Are you sure you want to delete this post?"),
-                                                          actions: <Widget>[
-                                                            FlatButton(
-                                                                child:
-                                                                    Text('YES'),
-                                                                onPressed: () {
-                                                                  dataObj
-                                                                      .deletePost(
-                                                                          post: posts[
-                                                                              index])
-                                                                      .then(
-                                                                          (value) {
-                                                                    _scaffoldKey
-                                                                        .currentState
-                                                                        .showSnackBar(SnackBar(
-                                                                            content:
-                                                                                Text("Post deleted successfull")));
-                                                                  });
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                })
-                                                          ],
-                                                        ),
-                                                      );
-                                                    })
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(5),
-                                        child: Align(
-                                          alignment: Alignment.topLeft,
-                                          child: RichText(
-                                            text: TextSpan(
-                                                text: "@" +
-                                                    posts[index].title +
-                                                    ": ",
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontStyle:
-                                                        FontStyle.italic),
-                                                children: <TextSpan>[
-                                                  TextSpan(
-                                                      text:
-                                                          posts[index].description,
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                          fontStyle:
-                                                              FontStyle.normal))
-                                                ]),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  )),
-                            );
-                          }),
-                    ),
-                  ],
-                ),
+                child: ListView.separated(
+                  itemBuilder: (context, int index) {
+                    return _buildPostSection(
+                      posts[index].image, 
+                      posts[index].title, 
+                      posts[index].description,
+                    );
+                  }, 
+                  separatorBuilder: (context, int index) {
+                    return Divider();
+                  }, 
+                  itemCount: posts.length),
               ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
-          elevation: 10,
           onPressed: () {
             dataObj.setFormStatus = true;
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-              return AddPost();
-            }));
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) {
+                return AddPost();
+              },),
+            );
           },
           child: Icon(Icons.add),
         ),
-        bottomNavigationBar: BottomAppBar(elevation: 0,
-          notchMargin: 8,
-          // color: Colors.lime[300].withOpacity(0.2),
-          shape: CircularNotchedRectangle(),
-          child: Container(
-            color: Colors.lime[500].withOpacity(0.4),
-            height: 35,
+      );
+  }
+
+  Widget _buildPostSection(String postImage, String title, String subtitle) {
+    return Container(
+      padding: EdgeInsets.all(20),
+      child: Row(
+        children: <Widget>[
+          Container(
+            width: 50,
+            height: 50,
+            margin: const EdgeInsets.only(right: 12),
+            child: FittedBox(
+              alignment: Alignment.centerLeft,
+              fit: BoxFit.cover,
+              child: CachedNetworkImage(
+                fit: BoxFit.cover,
+                imageUrl: postImage,
+                placeholder: (_, url) => CircularProgressIndicator(),
+                errorWidget: (_, url, error) => Icon(Icons.error),
+              ),
+            ),
           ),
-        ),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                  ),
+                )
+              ],
+            )
+          ),
+
+          Icon(
+            Icons.favorite_border,
+            color: Colors.grey[500],
+          ),
+        ],
       ),
     );
   }
