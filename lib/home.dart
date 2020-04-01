@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:post_request/AddPost.dart';
 import 'package:post_request/DataProvider.dart';
 import 'package:post_request/Post.dart';
+import 'package:post_request/post_detail.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -67,11 +68,7 @@ class Home extends StatelessWidget {
                 onRefresh: _onRefresh,
                 child: ListView.separated(
                   itemBuilder: (context, int index) {
-                    return _buildPostSection(
-                      posts[index].image, 
-                      posts[index].title, 
-                      posts[index].description,
-                    );
+                    return _buildPostSection(context:context, post:posts[index]);
                   }, 
                   separatorBuilder: (context, int index) {
                     return Divider();
@@ -92,8 +89,16 @@ class Home extends StatelessWidget {
       );
   }
 
-  Widget _buildPostSection(String postImage, String title, String subtitle) {
-    return Container(
+  Widget _buildPostSection({BuildContext context, Post post}) {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => PostDetailPage(post: post,)
+          )
+        );
+      },
+      child:  Container(
       padding: EdgeInsets.all(20),
       child: Row(
         children: <Widget>[
@@ -106,7 +111,7 @@ class Home extends StatelessWidget {
               fit: BoxFit.cover,
               child: CachedNetworkImage(
                 fit: BoxFit.cover,
-                imageUrl: postImage,
+                imageUrl: post.image,
                 placeholder: (_, url) => CircularProgressIndicator(),
                 errorWidget: (_, url, error) => Icon(Icons.error),
               ),
@@ -120,28 +125,37 @@ class Home extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
-                    title,
+                    post.title,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 Text(
-                  subtitle,
+                  post.description,
                   style: TextStyle(
                     color: Colors.grey[500],
                   ),
+                  overflow: TextOverflow.fade,
                 )
               ],
             )
           ),
 
-          Icon(
-            Icons.favorite_border,
-            color: Colors.grey[500],
+          IconButton(
+            icon: Icon(
+              Icons.favorite_border,
+              color: Colors.grey[500],
+            ),
+            onPressed: () {
+              Scaffold.of(context).showSnackBar(
+                SnackBar(content: Text('Like'))
+              );
+            }
           ),
         ],
       ),
+    ),
     );
   }
 }
