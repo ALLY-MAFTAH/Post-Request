@@ -4,6 +4,7 @@ import 'package:post_request/ui/AddPost.dart';
 import 'package:post_request/provider/DataProvider.dart';
 import 'package:post_request/model/Post.dart';
 import 'package:post_request/ui/post_detail.dart';
+import 'package:post_request/utils/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -29,9 +30,17 @@ class Home extends StatelessWidget {
     List<Post> posts = dataObj.posts;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('POST REQUEST APP'),
-      ),
+      appBar: AppBar(title: Text('POST REQUEST APP'), actions: [
+        IconButton(
+          icon: Icon(
+            Icons.exit_to_app,
+            color: Colors.white,
+          ),
+          onPressed: () async {
+            await AuthProvider().signOut();
+          },
+        )
+      ]),
       body: posts.isEmpty
           ? Center(
               child: dataObj.status != ""
