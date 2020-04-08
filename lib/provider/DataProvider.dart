@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:post_request/Post.dart';
+import 'package:post_request/model/Post.dart';
 import 'package:post_request/api/api.dart';
 import 'package:post_request/config.dart';
 import 'package:cloudinary_client/cloudinary_client.dart';

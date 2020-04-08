@@ -1,8 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:post_request/DataProvider.dart';
+import 'package:post_request/provider/DataProvider.dart';
+import 'package:post_request/ui/login.dart';
+import 'package:post_request/ui/splash.dart';
 import 'package:provider/provider.dart';
 
-import 'home.dart';
+import 'ui/home.dart';
 
 class App extends StatefulWidget {
   @override
@@ -23,14 +26,34 @@ class _AppState extends State<App> {
     return ChangeNotifierProvider(
       create: (BuildContext context) => _dataProvider,
       child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-            primarySwatch: Colors.green,
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.red,
           ),
-        home: Home(
-          dataProvider: _dataProvider,
-        ),
-      ),
+          home: MainScreen(
+            dataProvider: _dataProvider,
+          )),
+    );
+  }
+}
+
+class MainScreen extends StatelessWidget {
+  final DataProvider dataProvider;
+
+  const MainScreen({Key key, @required this.dataProvider}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: FirebaseAuth.instance.onAuthStateChanged,
+      builder: (context, AsyncSnapshot<FirebaseUser> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting)
+          return SplashPage();
+        if (!snapshot.hasData || snapshot.data == null) return LoginPage();
+        return Home(
+          dataProvider: dataProvider,
+        );
+      },
     );
   }
 }
